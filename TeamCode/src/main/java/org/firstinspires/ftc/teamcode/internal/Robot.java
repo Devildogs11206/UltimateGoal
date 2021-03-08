@@ -93,7 +93,8 @@ public class Robot {
 
     private VisionThread visionThread;
 
-    public WebcamName webcamName;
+    public WebcamName webcamName1;
+    public WebcamName webcamName2;
     public int cameraMonitorViewId;
     public int tfodMonitorViewId;
 
@@ -199,7 +200,8 @@ public class Robot {
         intakeLatch = hardwareMap.get(Servo.class,"intakeLatch");
 
         try {
-            webcamName = hardwareMap.get(WebcamName.class,"Webcam 1");
+            webcamName1 = hardwareMap.get(WebcamName.class,"Webcam 1");
+            webcamName2 = hardwareMap.get(WebcamName.class,"Webcam 2");
             cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
             tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("tfodMonitorViewId","id",hardwareMap.appContext.getPackageName());
 
