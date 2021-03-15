@@ -8,10 +8,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.SwitchableCamera;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.opmodes.OpMode;
 
@@ -93,8 +95,9 @@ public class Robot {
 
     private VisionThread visionThread;
 
-    public WebcamName webcamName1;
-    public WebcamName webcamName2;
+    public WebcamName ringWebcam;
+    public WebcamName navigationWebcam;
+    public WebcamName activeWebcam;
     public int cameraMonitorViewId;
     public int tfodMonitorViewId;
 
@@ -200,8 +203,8 @@ public class Robot {
         intakeLatch = hardwareMap.get(Servo.class,"intakeLatch");
 
         try {
-            webcamName1 = hardwareMap.get(WebcamName.class,"Webcam 1");
-            webcamName2 = hardwareMap.get(WebcamName.class,"Webcam 2");
+            ringWebcam = hardwareMap.get(WebcamName.class,"ringWebcam");
+            navigationWebcam = hardwareMap.get(WebcamName.class,"navigationWebcam");
             cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
             tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("tfodMonitorViewId","id",hardwareMap.appContext.getPackageName());
 

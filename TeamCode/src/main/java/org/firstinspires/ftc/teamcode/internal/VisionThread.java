@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.internal;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.SwitchableCamera;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -63,7 +64,7 @@ public class VisionThread extends Thread {
         try {
             VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(robot.cameraMonitorViewId);
             parameters.vuforiaLicenseKey = VUFORIA_KEY;
-            parameters.cameraName = robot.webcamName;
+            parameters.cameraName = ClassFactory.getInstance().getCameraManager().nameForSwitchableCamera(robot.ringWebcam, robot.navigationWebcam);
 
             vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
@@ -114,7 +115,7 @@ public class VisionThread extends Thread {
                     .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, -90, 0, -75));
 
             for (VuforiaTrackable trackable : allTrackables) {
-                ((VuforiaTrackableDefaultListener) trackable.getListener()).setCameraLocationOnRobot(robot.webcamName, robotFromCamera);
+                ((VuforiaTrackableDefaultListener) trackable.getListener()).setCameraLocationOnRobot(robot.navigationWebcam, robotFromCamera);
             }
 
             targetsUltimateGoal.activate();
