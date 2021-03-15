@@ -74,29 +74,26 @@ public class Robot {
     private DcMotor driveLeftRear;
     private DcMotor driveRightRear;
 
-    private DcMotor intakeTop;
-    private DcMotor intakeBottom;
-    private DcMotor wobbleArm;
-    private DcMotor intakeLift;
-
-    private Servo wobbleLatch;
-    private Servo wobbleRingLatch;
     private RevBlinkinLedDriver lights;
 
+    private DcMotor wobbleArm;
+    private Servo wobbleLatch;
+    private Servo wobbleRingLatch;
     private DigitalChannel wobbleLimitBack;
     private DigitalChannel wobbleLimitFront;
+
+    private DcMotor shooterWheel;
+    private Servo shooterFlipper;
+
+    private DcMotor intakeWheel;
+    private DcMotor intakeLift;
+    private Servo intakeLatch;
 
     private VisionThread visionThread;
 
     public WebcamName webcamName;
     public int cameraMonitorViewId;
     public int tfodMonitorViewId;
-
-    private DcMotor shooterWheel;
-    private Servo shooterFlipper;
-
-    private DcMotor intakeWheel;
-
 
     public boolean navigationTargetVisible = false;
     public Position position = new Position(DistanceUnit.INCH, 0, 0, 0, 0);
@@ -155,17 +152,7 @@ public class Robot {
         driveRightRear.setMode(STOP_AND_RESET_ENCODER);
         driveRightRear.setMode(RUN_USING_ENCODER);
 
-        intakeTop = hardwareMap.get(DcMotor.class, "intakeTop");
-        intakeTop.setDirection(FORWARD);
-        intakeTop.setZeroPowerBehavior(BRAKE);
-        intakeTop.setMode(STOP_AND_RESET_ENCODER);
-        intakeTop.setMode(RUN_USING_ENCODER);
-
-        intakeBottom = hardwareMap.get(DcMotor.class, "intakeBottom");
-        intakeBottom.setDirection(FORWARD);
-        intakeBottom.setZeroPowerBehavior(BRAKE);
-        intakeBottom.setMode(STOP_AND_RESET_ENCODER);
-        intakeBottom.setMode(RUN_USING_ENCODER);
+        lights = hardwareMap.get(RevBlinkinLedDriver.class,"lights");
 
         wobbleArm = hardwareMap.get(DcMotor.class, "wobbleArm");
         wobbleArm.setDirection(FORWARD);
@@ -175,7 +162,6 @@ public class Robot {
 
         wobbleLatch = hardwareMap.get(Servo.class,"wobbleLatch");
         wobbleRingLatch = hardwareMap.get(Servo.class,"wobbleRingLatch");
-        lights = hardwareMap.get(RevBlinkinLedDriver.class,"lights");
 
         wobbleLimitBack = hardwareMap.get(DigitalChannel.class, "wobbleLimitBack");
         wobbleLimitBack.setMode(INPUT);
@@ -188,13 +174,22 @@ public class Robot {
         shooterWheel.setMode(STOP_AND_RESET_ENCODER);
         shooterWheel.setMode(RUN_USING_ENCODER);
 
+        shooterFlipper = hardwareMap.get(Servo.class,"shooterFlipper");
+
+
         intakeWheel = hardwareMap.get(DcMotor.class, "intakeWheel");
         intakeWheel.setDirection(FORWARD);
         intakeWheel.setZeroPowerBehavior(FLOAT);
         intakeWheel.setMode(STOP_AND_RESET_ENCODER);
         intakeWheel.setMode(RUN_USING_ENCODER);
 
-        shooterFlipper = hardwareMap.get(Servo.class,"shooterFlipper");
+        intakeLift = hardwareMap.get(DcMotor.class, "intakeLift");
+        intakeLift.setDirection(FORWARD);
+        intakeLift.setZeroPowerBehavior(BRAKE);
+        intakeLift.setMode(STOP_AND_RESET_ENCODER);
+        intakeLift.setMode(RUN_USING_ENCODER);
+
+        intakeLatch = hardwareMap.get(Servo.class,"intakeLatch");
 
         try {
             webcamName = hardwareMap.get(WebcamName.class,"Webcam 1");
@@ -313,12 +308,6 @@ public class Robot {
         return y1 + ((y2 - y1) / (x2 - x1)) * (item.getHeight() - x1);
     }
 
-    public void setAttachmentMotorPower(double power0, double power1, double power2, double power3) {
-        intakeTop.setPower(power0);
-        intakeBottom.setPower(power1);
-        wobbleArm.setPower(power2);
-    }
-
     public enum WobbleArmAction {
         UP(0.50), DOWN(-0.50), STOP(0);
 
@@ -407,6 +396,46 @@ public class Robot {
         }
     }
 
+    public enum IntakeWheelMode {
+        ON, OFF
+    }
+
+    public void intake(IntakeWheelMode mode){
+        switch(mode) {
+            case ON:
+                intakeWheel.setPower(1);
+            case OFF:
+                intakeWheel.setPower(0);
+        }
+    }
+
+    public enum IntakeLiftPosition {
+        UP, DOWN
+    }
+
+    public enum IntakeLatchPosition {
+        OPEN(0.6), CLOSED(0.4);  //change later
+
+        public double value;
+
+        IntakeLatchPosition(double value) {
+            this.value = value;
+        }
+    }
+
+    public void intake(IntakeLiftPosition mode){
+        switch(mode) {
+            case UP:
+                intakeLift.setPower(0.25);
+            case DOWN:
+                intakeLift.setPower(0);
+        }
+    }
+
+    public void intake(IntakeLatchPosition position) {
+        intakeLatch.setPosition(position.value);
+    }
+
     public void addTelemetry() {
         Telemetry telemetry = opMode.telemetry;
 
@@ -419,9 +448,12 @@ public class Robot {
         telemetry.addData("Drive (RF)", "%.2f Pow, %d Pos", driveRightFront.getPower(), driveRightFront.getCurrentPosition());
         telemetry.addData("Drive (RR)", "%.2f Pow, %d Pos", driveRightRear.getPower(), driveRightRear.getCurrentPosition());
         telemetry.addData("Wobble Arm", "%.2f Pow, %d Pos", wobbleArm.getPower(), wobbleArm.getCurrentPosition());
+        telemetry.addData("Wobble Latch", wobbleLatch.getPosition());
         telemetry.addData("Wobble Arm Down Limit", wobbleLimitBack.getState());
         telemetry.addData("Wobble Arm Up Limit", wobbleLimitFront.getState());
-        telemetry.addData("Wobble Latch Position", wobbleLatch.getPosition());
+        telemetry.addData("Intake Wheel", "%.2f Pow, %d Pos", intakeWheel.getPower(), intakeWheel.getCurrentPosition());
+        telemetry.addData("Intake Lift", "%.2f Pow, %d Pos", intakeLift.getPower(), intakeLift.getCurrentPosition());
+        telemetry.addData("Intake Latch", wobbleLatch.getPosition());
         telemetry.addData("Target Visible", navigationTargetVisible);
         telemetry.addData("Position (in)", position);
         telemetry.addData("Orientation", orientation);
@@ -478,31 +510,5 @@ public class Robot {
         return value >= 0 ?
             Math.min(max, Math.max(min, value)) :
             Math.min(-min, Math.max(-max, value));
-    }
-
-    public enum IntakeMode{
-        ON,OFF
-    }
-
-    public void intake(IntakeMode mode){
-         switch(mode) {
-             case ON:
-                 intakeWheel.setPower(1);
-             case OFF:
-                 intakeWheel.setPower(0);
-         }
-    }
-
-    public enum IntakeLiftMode{
-        UP,DOWN
-    }
-
-    public void intake(IntakeLiftMode mode){
-        switch(mode) {
-            case UP:
-                intakeLift.setPower(1);
-            case DOWN:
-                intakeLift.setPower(0);
-        }
     }
 }
