@@ -88,6 +88,8 @@ public class Robot {
     private DcMotor intakeWheel;
     private DcMotor intakeLift;
     private Servo intakeLatch;
+    private DigitalChannel intakeLiftLimitTop;
+    private DigitalChannel intakeLiftLimitBottom;
 
     private VisionThread visionThread;
 
@@ -188,6 +190,11 @@ public class Robot {
         intakeLift.setZeroPowerBehavior(BRAKE);
         intakeLift.setMode(STOP_AND_RESET_ENCODER);
         intakeLift.setMode(RUN_USING_ENCODER);
+
+        intakeLiftLimitTop = hardwareMap.get(DigitalChannel.class, "intakeLiftLimitTop");
+        intakeLiftLimitTop.setMode(INPUT);
+        intakeLiftLimitBottom = hardwareMap.get(DigitalChannel.class, "intakeLiftLimitBottom");
+        intakeLiftLimitBottom.setMode(INPUT);
 
         intakeLatch = hardwareMap.get(Servo.class,"intakeLatch");
 
@@ -410,7 +417,13 @@ public class Robot {
     }
 
     public enum IntakeLiftPosition {
-        UP, DOWN
+        UP(.5), DOWN(-.5);
+
+        public double power;
+
+        IntakeLiftPosition(double power) {
+            this.power = power;
+        }
     }
 
     public enum IntakeLatchPosition {
@@ -424,12 +437,11 @@ public class Robot {
     }
 
     public void intake(IntakeLiftPosition mode){
-        switch(mode) {
-            case UP:
-                intakeLift.setPower(0.25);
-            case DOWN:
-                intakeLift.setPower(0);
+        intakeLift.setPower(mode.power);
+        while (!intakeLiftLimitTop.getState()){
+            opMode.sleep(50);
         }
+        intakeLift.setPower(0);
     }
 
     public void intake(IntakeLatchPosition position) {
@@ -449,11 +461,13 @@ public class Robot {
         telemetry.addData("Drive (RR)", "%.2f Pow, %d Pos", driveRightRear.getPower(), driveRightRear.getCurrentPosition());
         telemetry.addData("Wobble Arm", "%.2f Pow, %d Pos", wobbleArm.getPower(), wobbleArm.getCurrentPosition());
         telemetry.addData("Wobble Latch", wobbleLatch.getPosition());
-        telemetry.addData("Wobble Arm Down Limit", wobbleLimitBack.getState());
-        telemetry.addData("Wobble Arm Up Limit", wobbleLimitFront.getState());
+        telemetry.addData("Wobble Limit Back", wobbleLimitBack.getState());
+        telemetry.addData("Wobble Limit Front", wobbleLimitFront.getState());
         telemetry.addData("Intake Wheel", "%.2f Pow, %d Pos", intakeWheel.getPower(), intakeWheel.getCurrentPosition());
         telemetry.addData("Intake Lift", "%.2f Pow, %d Pos", intakeLift.getPower(), intakeLift.getCurrentPosition());
         telemetry.addData("Intake Latch", wobbleLatch.getPosition());
+        telemetry.addData("Intake Lift Limit Bottom", intakeLiftLimitBottom.getState());
+        telemetry.addData("Intake Lift Limit Top", intakeLiftLimitTop.getState());
         telemetry.addData("Target Visible", navigationTargetVisible);
         telemetry.addData("Position (in)", position);
         telemetry.addData("Orientation", orientation);
@@ -511,4 +525,5 @@ public class Robot {
             Math.min(max, Math.max(min, value)) :
             Math.min(-min, Math.max(-max, value));
     }
+
 }
