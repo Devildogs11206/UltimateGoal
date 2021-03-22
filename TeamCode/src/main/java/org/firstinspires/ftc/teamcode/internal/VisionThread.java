@@ -128,9 +128,10 @@ public class VisionThread extends Thread {
 
             opMode.waitForStart();
 
+            SwitchableCamera switchableCamera = (SwitchableCamera) vuforia.getCamera();
+
             while (opMode.isActive()) {
-                SwitchableCamera switchableCamera = (SwitchableCamera) vuforia.getCamera();
-                if (switchableCamera.getActiveCamera() != robot.activeWebcam) {
+                if (switchableCamera != null && switchableCamera.getActiveCamera() != robot.activeWebcam) {
                     switchableCamera.setActiveCamera(robot.activeWebcam);
                 }
 

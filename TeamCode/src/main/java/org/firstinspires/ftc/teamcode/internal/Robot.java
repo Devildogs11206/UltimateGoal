@@ -8,12 +8,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.SwitchableCamera;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.opmodes.OpMode;
 
@@ -43,6 +41,7 @@ import static com.qualcomm.robotcore.hardware.DigitalChannel.Mode.INPUT;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.ZYX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.INTRINSIC;
+import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLiftMode.CALIBRATE;
 import static org.firstinspires.ftc.teamcode.internal.Robot.RobotDriveType.MECANUM;
 import static org.firstinspires.ftc.teamcode.internal.Robot.WobbleArmAction.DOWN;
 import static org.firstinspires.ftc.teamcode.internal.Robot.WobbleArmAction.UP;
@@ -182,7 +181,6 @@ public class Robot {
 
         shooterFlipper = hardwareMap.get(Servo.class,"shooterFlipper");
 
-
         intakeWheel = hardwareMap.get(DcMotor.class, "intakeWheel");
         intakeWheel.setDirection(FORWARD);
         intakeWheel.setZeroPowerBehavior(FLOAT);
@@ -195,12 +193,12 @@ public class Robot {
         intakeLift.setMode(STOP_AND_RESET_ENCODER);
         intakeLift.setMode(RUN_USING_ENCODER);
 
+        intakeLatch = hardwareMap.get(Servo.class,"intakeLatch");
+
         intakeLiftLimitTop = hardwareMap.get(DigitalChannel.class, "intakeLiftLimitTop");
         intakeLiftLimitTop.setMode(INPUT);
         intakeLiftLimitBottom = hardwareMap.get(DigitalChannel.class, "intakeLiftLimitBottom");
         intakeLiftLimitBottom.setMode(INPUT);
-
-        intakeLatch = hardwareMap.get(Servo.class,"intakeLatch");
 
         try {
             ringWebcam = hardwareMap.get(WebcamName.class,"ringWebcam");
@@ -230,7 +228,7 @@ public class Robot {
 
     public void calibrate() {
         setLights(CALIBRATE_COLOR);
-        intake(IntakeLiftMode.CALIBRATE);
+        intake(CALIBRATE);
         setLights(READY_COLOR);
     }
 
@@ -446,17 +444,15 @@ public class Robot {
     }
 
     public void intake(IntakeLiftMode mode){
-        switch(mode){
-            case CALIBRATE:
-                intakeLift.setPower(mode.power);
-                while (!intakeLiftLimitBottom.getState()) opMode.sleep(50);
-                intakeLift.setPower(0);
-                intakeLift.setMode(STOP_AND_RESET_ENCODER);
-            default:
-                intakeLift.setTargetPosition(mode.position);
-                intakeLift.setMode(RUN_TO_POSITION);
-                intakeLift.setPower(mode.power);
-                break;
+        if (mode == CALIBRATE) {
+            intakeLift.setPower(mode.power);
+            while (!intakeLiftLimitBottom.getState()) opMode.sleep(50);
+            intakeLift.setPower(0);
+            intakeLift.setMode(STOP_AND_RESET_ENCODER);
+        } else {
+            intakeLift.setTargetPosition(mode.position);
+            intakeLift.setMode(RUN_TO_POSITION);
+            intakeLift.setPower(mode.power);
         }
     }
 
@@ -541,5 +537,4 @@ public class Robot {
             Math.min(max, Math.max(min, value)) :
             Math.min(-min, Math.max(-max, value));
     }
-
 }
