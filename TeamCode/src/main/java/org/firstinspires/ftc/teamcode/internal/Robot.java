@@ -224,6 +224,7 @@ public class Robot {
 
     public void calibrate() {
         setLights(CALIBRATE_COLOR);
+        intake(IntakeLiftMode.CALIBRATE);
         setLights(READY_COLOR);
     }
 
@@ -416,13 +417,15 @@ public class Robot {
         }
     }
 
-    public enum IntakeLiftPosition {
-        UP(.5), DOWN(-.5);
+    public enum IntakeLiftMode {
+        CALIBRATE(-.5,0), UP(.5,500), DOWN(-.5,0);  //change Up later when we konw
 
         public double power;
+        public int position;
 
-        IntakeLiftPosition(double power) {
+        IntakeLiftMode(double power, int position) {
             this.power = power;
+            this.position = position;
         }
     }
 
@@ -436,12 +439,19 @@ public class Robot {
         }
     }
 
-    public void intake(IntakeLiftPosition mode){
-        intakeLift.setPower(mode.power);
-        while (!intakeLiftLimitTop.getState()){
-            opMode.sleep(50);
+    public void intake(IntakeLiftMode mode){
+        switch(mode){
+            case CALIBRATE:
+                intakeLift.setPower(mode.power);
+                while (!intakeLiftLimitBottom.getState()) opMode.sleep(50);
+                intakeLift.setPower(0);
+                intakeLift.setMode(STOP_AND_RESET_ENCODER);
+            default:
+                intakeLift.setTargetPosition(mode.position);
+                intakeLift.setMode(RUN_TO_POSITION);
+                intakeLift.setPower(mode.power);
+                break;
         }
-        intakeLift.setPower(0);
     }
 
     public void intake(IntakeLatchPosition position) {

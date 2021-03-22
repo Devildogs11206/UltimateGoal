@@ -4,8 +4,8 @@ import org.firstinspires.ftc.teamcode.opmodes.OpMode;
 
 import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeWheelMode.OFF;
 import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeWheelMode.ON;
-import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLiftPosition.DOWN;
-import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLiftPosition.UP;
+import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLiftMode.DOWN;
+import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLiftMode.UP;
 import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLatchPosition.CLOSED;
 import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLatchPosition.OPEN;
 
