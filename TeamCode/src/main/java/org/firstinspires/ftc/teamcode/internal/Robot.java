@@ -445,10 +445,10 @@ public class Robot {
 
     public void intake(IntakeLiftMode mode){
         if (mode == CALIBRATE) {
-            intakeLift.setPower(mode.power);
-            while (!intakeLiftLimitBottom.getState()) opMode.sleep(50);
-            intakeLift.setPower(0);
-            intakeLift.setMode(STOP_AND_RESET_ENCODER);
+            //intakeLift.setPower(mode.power);
+            //while (!intakeLiftLimitBottom.getState()) opMode.sleep(50);
+            //intakeLift.setPower(0);
+           // intakeLift.setMode(STOP_AND_RESET_ENCODER);
         } else {
             intakeLift.setTargetPosition(mode.position);
             intakeLift.setMode(RUN_TO_POSITION);
