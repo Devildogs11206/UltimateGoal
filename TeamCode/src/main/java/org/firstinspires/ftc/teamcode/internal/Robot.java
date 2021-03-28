@@ -41,6 +41,7 @@ import static com.qualcomm.robotcore.hardware.DigitalChannel.Mode.INPUT;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.ZYX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.INTRINSIC;
+import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLatchPosition.CLOSED;
 import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLiftMode.CALIBRATE;
 import static org.firstinspires.ftc.teamcode.internal.Robot.RobotDriveType.MECANUM;
 import static org.firstinspires.ftc.teamcode.internal.Robot.WobbleArmAction.DOWN;
@@ -229,7 +230,7 @@ public class Robot {
     public void calibrate() {
         setLights(CALIBRATE_COLOR);
         intake(CALIBRATE);
-        intake(IntakeLatchPosition.CLOSED);
+        intake(CLOSED);
         setLights(READY_COLOR);
     }
 
