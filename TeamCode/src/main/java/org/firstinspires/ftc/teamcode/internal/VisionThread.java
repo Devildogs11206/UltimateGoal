@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.internal;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.SwitchableCamera;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -63,7 +64,7 @@ public class VisionThread extends Thread {
         try {
             VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(robot.cameraMonitorViewId);
             parameters.vuforiaLicenseKey = VUFORIA_KEY;
-            parameters.cameraName = robot.webcamName;
+            parameters.cameraName = ClassFactory.getInstance().getCameraManager().nameForSwitchableCamera(robot.ringWebcam, robot.navigationWebcam);
 
             vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
@@ -105,16 +106,16 @@ public class VisionThread extends Thread {
 
             // Next, translate the camera lens to where it is on the robot.
             // In this example, it is centered (left to right), but forward of the middle of the robot, and above ground level.
-            final float CAMERA_FORWARD_DISPLACEMENT = 8.125f * mmPerInch; // eg: Camera is 4 Inches in front of robot-center
-            final float CAMERA_VERTICAL_DISPLACEMENT = 5.25f * mmPerInch; // eg: Camera is 8 Inches above ground
-            final float CAMERA_LEFT_DISPLACEMENT = -5.25f;     // eg: Camera is ON the robot's center line
+            final float CAMERA_FORWARD_DISPLACEMENT = 9.25f * mmPerInch; // eg: Camera is 9.25 Inches in front of robot-center
+            final float CAMERA_VERTICAL_DISPLACEMENT = 4.25f * mmPerInch; // eg: Camera is 4.25 Inches above ground
+            final float CAMERA_HORIZONTAL_DISPLACEMENT = 0f; // eg: Camera is ON the robot's center line
 
             OpenGLMatrix robotFromCamera = OpenGLMatrix
-                    .translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
-                    .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, -90, 0, -75));
+                    .translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_HORIZONTAL_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
+                    .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, 90));
 
             for (VuforiaTrackable trackable : allTrackables) {
-                ((VuforiaTrackableDefaultListener) trackable.getListener()).setCameraLocationOnRobot(robot.webcamName, robotFromCamera);
+                ((VuforiaTrackableDefaultListener) trackable.getListener()).setCameraLocationOnRobot(robot.navigationWebcam, robotFromCamera);
             }
 
             targetsUltimateGoal.activate();
@@ -127,7 +128,13 @@ public class VisionThread extends Thread {
 
             opMode.waitForStart();
 
+            SwitchableCamera switchableCamera = (SwitchableCamera) vuforia.getCamera();
+
             while (opMode.isActive()) {
+                if (switchableCamera != null && switchableCamera.getActiveCamera() != robot.activeWebcam) {
+                    switchableCamera.setActiveCamera(robot.activeWebcam);
+                }
+
                 // check all the trackable targets to see which one (if any) is visible.
                 boolean targetVisible = false;
 

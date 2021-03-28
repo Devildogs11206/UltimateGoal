@@ -21,6 +21,8 @@ public class Blue2OpMode extends BlueOpMode {
             }
         }
 
+        robot.activeWebcam = robot.navigationWebcam;
+
         switch (recognitionLabel) {
             case "Quad": this.targetC(); break;
             case "Single": this.targetB(); break;

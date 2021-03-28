@@ -41,6 +41,7 @@ import static com.qualcomm.robotcore.hardware.DigitalChannel.Mode.INPUT;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.ZYX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.INTRINSIC;
+import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLiftMode.CALIBRATE;
 import static org.firstinspires.ftc.teamcode.internal.Robot.RobotDriveType.MECANUM;
 import static org.firstinspires.ftc.teamcode.internal.Robot.WobbleArmAction.DOWN;
 import static org.firstinspires.ftc.teamcode.internal.Robot.WobbleArmAction.UP;
@@ -93,7 +94,9 @@ public class Robot {
 
     private VisionThread visionThread;
 
-    public WebcamName webcamName;
+    public WebcamName ringWebcam;
+    public WebcamName navigationWebcam;
+    public WebcamName activeWebcam;
     public int cameraMonitorViewId;
     public int tfodMonitorViewId;
 
@@ -178,7 +181,6 @@ public class Robot {
 
         shooterFlipper = hardwareMap.get(Servo.class,"shooterFlipper");
 
-
         intakeWheel = hardwareMap.get(DcMotor.class, "intakeWheel");
         intakeWheel.setDirection(FORWARD);
         intakeWheel.setZeroPowerBehavior(FLOAT);
@@ -191,15 +193,17 @@ public class Robot {
         intakeLift.setMode(STOP_AND_RESET_ENCODER);
         intakeLift.setMode(RUN_USING_ENCODER);
 
+        intakeLatch = hardwareMap.get(Servo.class,"intakeLatch");
+
         intakeLiftLimitTop = hardwareMap.get(DigitalChannel.class, "intakeLiftLimitTop");
         intakeLiftLimitTop.setMode(INPUT);
         intakeLiftLimitBottom = hardwareMap.get(DigitalChannel.class, "intakeLiftLimitBottom");
         intakeLiftLimitBottom.setMode(INPUT);
 
-        intakeLatch = hardwareMap.get(Servo.class,"intakeLatch");
-
         try {
-            webcamName = hardwareMap.get(WebcamName.class,"Webcam 1");
+            ringWebcam = hardwareMap.get(WebcamName.class,"ringWebcam");
+            navigationWebcam = hardwareMap.get(WebcamName.class,"navigationWebcam");
+            activeWebcam = ringWebcam;
             cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
             tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("tfodMonitorViewId","id",hardwareMap.appContext.getPackageName());
 
@@ -224,7 +228,7 @@ public class Robot {
 
     public void calibrate() {
         setLights(CALIBRATE_COLOR);
-        intake(IntakeLiftMode.CALIBRATE);
+        intake(CALIBRATE);
         setLights(READY_COLOR);
     }
 
@@ -442,22 +446,24 @@ public class Robot {
     }
 
     public void intake(IntakeLiftMode mode){
-        switch(mode){
-            case CALIBRATE:
-                intakeLift.setPower(mode.power);
-                while (!intakeLiftLimitBottom.getState()) opMode.sleep(50);
-                intakeLift.setPower(0);
-                intakeLift.setMode(STOP_AND_RESET_ENCODER);
-            default:
-                intakeLift.setTargetPosition(mode.position);
-                intakeLift.setMode(RUN_TO_POSITION);
-                intakeLift.setPower(mode.power);
-                break;
+        if (mode == CALIBRATE) {
+            //intakeLift.setPower(mode.power);
+            //while (!intakeLiftLimitBottom.getState()) opMode.sleep(50);
+            //intakeLift.setPower(0);
+           // intakeLift.setMode(STOP_AND_RESET_ENCODER);
+        } else {
+            intakeLift.setTargetPosition(mode.position);
+            intakeLift.setMode(RUN_TO_POSITION);
+            intakeLift.setPower(mode.power);
         }
     }
 
     public void intake(IntakeLatchPosition position) {
         intakeLatch.setPosition(position.value);
+    }
+
+    public void intake(double position) {
+        intakeLatch.setPosition(position);
     }
 
     public void addTelemetry() {
@@ -477,7 +483,7 @@ public class Robot {
         telemetry.addData("Wobble Limit Front", wobbleLimitFront.getState());
         telemetry.addData("Intake Wheel", "%.2f Pow, %d Pos", intakeWheel.getPower(), intakeWheel.getCurrentPosition());
         telemetry.addData("Intake Lift", "%.2f Pow, %d Pos", intakeLift.getPower(), intakeLift.getCurrentPosition());
-        telemetry.addData("Intake Latch", wobbleLatch.getPosition());
+        telemetry.addData("Intake Latch", intakeLatch.getPosition());
         telemetry.addData("Intake Lift Limit Bottom", intakeLiftLimitBottom.getState());
         telemetry.addData("Intake Lift Limit Top", intakeLiftLimitTop.getState());
         telemetry.addData("Target Visible", navigationTargetVisible);
@@ -537,5 +543,4 @@ public class Robot {
             Math.min(max, Math.max(min, value)) :
             Math.min(-min, Math.max(-max, value));
     }
-
 }

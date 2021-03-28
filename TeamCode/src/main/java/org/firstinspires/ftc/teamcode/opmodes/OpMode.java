@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.internal.Robot;
 import static org.firstinspires.ftc.teamcode.internal.Alliance.UNKNOWN;
 
 public abstract class OpMode extends LinearOpMode {
-    private boolean calibrate = false;
+    private boolean calibrate;
 
     public Robot robot;
 
