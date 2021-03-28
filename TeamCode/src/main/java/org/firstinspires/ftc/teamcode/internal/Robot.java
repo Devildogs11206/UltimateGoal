@@ -466,8 +466,8 @@ public class Robot {
         intakeLatch.setPosition(position.value);
     }
 
-    public void intake(double position) {
-        intakeLatch.setPosition(position);
+    public void shooter(double position) {
+        shooterFlipper.setPosition(position);
     }
 
     public void addTelemetry() {
