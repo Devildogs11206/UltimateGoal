@@ -424,7 +424,7 @@ public class Robot {
     }
 
     public enum IntakeLiftMode {
-        CALIBRATE(-.5,0), UP(.5,500), DOWN(-.5,0), STOP(0,0);  //change Up later when we konw
+        CALIBRATE(-.2,0), UP(.2,500), DOWN(-.2,0), STOP(0,0);  //change Up later when we konw
 
         public double power;
         public int position;
