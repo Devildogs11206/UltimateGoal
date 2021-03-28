@@ -229,6 +229,7 @@ public class Robot {
     public void calibrate() {
         setLights(CALIBRATE_COLOR);
         intake(CALIBRATE);
+        intake(IntakeLatchPosition.CLOSED);
         setLights(READY_COLOR);
     }
 
