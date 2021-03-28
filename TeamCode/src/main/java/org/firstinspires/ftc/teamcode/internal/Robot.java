@@ -174,7 +174,7 @@ public class Robot {
         wobbleLimitFront.setMode(INPUT);
 
         shooterWheel = hardwareMap.get(DcMotor.class, "shooterWheel");
-        shooterWheel.setDirection(FORWARD);
+        shooterWheel.setDirection(REVERSE);
         shooterWheel.setZeroPowerBehavior(FLOAT);
         shooterWheel.setMode(STOP_AND_RESET_ENCODER);
         shooterWheel.setMode(RUN_USING_ENCODER);
