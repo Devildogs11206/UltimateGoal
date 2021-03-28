@@ -16,6 +16,5 @@ public class ShooterController extends RobotController {
         if (gamepad2.x) robot.shooter(ON);
         else if (gamepad2.y) robot.shooter(SHOOT);
         else if (gamepad2.b) robot.shooter(OFF);
-        robot.shooter (gamepad2.left_stick_x);
     }
 }

@@ -18,7 +18,7 @@ public class TeleOpMode extends OpMode {
     private RobotController[] robotControllers;
 
     public TeleOpMode() {
-        super(false);
+        super(true);
     }
 
     protected Alliance getAlliance() {

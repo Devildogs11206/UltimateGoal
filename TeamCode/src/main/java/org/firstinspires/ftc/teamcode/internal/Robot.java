@@ -42,6 +42,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGR
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.ZYX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.INTRINSIC;
 import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLatchPosition.CLOSED;
+import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLatchPosition.OPEN;
 import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLiftMode.CALIBRATE;
 import static org.firstinspires.ftc.teamcode.internal.Robot.RobotDriveType.MECANUM;
 import static org.firstinspires.ftc.teamcode.internal.Robot.WobbleArmAction.DOWN;
@@ -183,8 +184,8 @@ public class Robot {
         shooterFlipper = hardwareMap.get(Servo.class,"shooterFlipper");
 
         intakeWheel = hardwareMap.get(DcMotor.class, "intakeWheel");
-        intakeWheel.setDirection(FORWARD);
-        intakeWheel.setZeroPowerBehavior(FLOAT);
+        intakeWheel.setDirection(REVERSE);
+        intakeWheel.setZeroPowerBehavior(BRAKE);
         intakeWheel.setMode(STOP_AND_RESET_ENCODER);
         intakeWheel.setMode(RUN_USING_ENCODER);
 
@@ -404,7 +405,7 @@ public class Robot {
             case SHOOT:
                 shooterFlipper.setPosition(1);
                 opMode.sleep(500); //extend to 750-1000 if jamming
-                shooterFlipper.setPosition(0.85);
+                shooterFlipper.setPosition(0);
                 opMode.sleep(500);
                 break;
         }
@@ -448,14 +449,15 @@ public class Robot {
     }
 
     public void intake(IntakeLiftMode mode){
-        switch(mode){
+        switch(mode) {
             case CALIBRATE:
                 //intakeLift.setPower(mode.power);
                 //while (!intakeLiftLimitBottom.getState()) opMode.sleep(50);
                 //intakeLift.setPower(0);
-                // intakeLift.setMode(STOP_AND_RESET_ENCODER);
+                //intakeLift.setMode(STOP_AND_RESET_ENCODER);
                 break;
             case UP:
+                intake(OPEN);
                 intakeLift.setPower(intakeLiftLimitTop.getState() ? mode.power : 0);
                 break;
             case DOWN:
@@ -469,10 +471,6 @@ public class Robot {
 
     public void intake(IntakeLatchPosition position) {
         intakeLatch.setPosition(position.value);
-    }
-
-    public void shooter(double position) {
-        shooterFlipper.setPosition(position);
     }
 
     public void addTelemetry() {
@@ -495,6 +493,8 @@ public class Robot {
         telemetry.addData("Intake Latch", intakeLatch.getPosition());
         telemetry.addData("Intake Lift Limit Bottom", intakeLiftLimitBottom.getState());
         telemetry.addData("Intake Lift Limit Top", intakeLiftLimitTop.getState());
+        telemetry.addData("Shooter Wheel", "%.2f Pow, %d Pos", shooterWheel.getPower(), shooterWheel.getCurrentPosition());
+        telemetry.addData("Shooter Flipper", shooterFlipper.getPosition());
         telemetry.addData("Target Visible", navigationTargetVisible);
         telemetry.addData("Position (in)", position);
         telemetry.addData("Orientation", orientation);
