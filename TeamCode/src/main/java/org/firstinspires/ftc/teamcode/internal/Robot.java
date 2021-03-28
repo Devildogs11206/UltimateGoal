@@ -412,8 +412,10 @@ public class Robot {
         switch(mode) {
             case ON:
                 intakeWheel.setPower(1);
+                break;
             case OFF:
                 intakeWheel.setPower(0);
+                break;
         }
     }
 
