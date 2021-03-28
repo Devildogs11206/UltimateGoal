@@ -434,7 +434,7 @@ public class Robot {
     }
 
     public enum IntakeLatchPosition {
-        OPEN(0.6), CLOSED(0.4);  //change later
+        OPEN(0), CLOSED(0.9);  //change later
 
         public double value;
 
