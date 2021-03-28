@@ -2,9 +2,6 @@ package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLiftMode.DOWN;
-import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLiftMode.STOP;
-import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLiftMode.UP;
 import static org.firstinspires.ftc.teamcode.internal.Robot.ShooterMode.ON;
 import static org.firstinspires.ftc.teamcode.internal.Robot.ShooterMode.SHOOT;
 
@@ -42,6 +39,7 @@ public class Blue2OpMode extends BlueOpMode {
         robot.drive(1,0,28,64);
         robot.drive(-1,0,28,5);
         robot.drive(0,-1,0,15);  //change started here
+        robot.drive(0,1,0,28);
     }
 
     protected void targetB() {
@@ -53,6 +51,7 @@ public class Blue2OpMode extends BlueOpMode {
         robot.drive(1,0,9,40);
         robot.drive(-1,0,0,25);
         robot.drive(0,-1,0,39);
+        robot.drive(0,1,0,28);
     }
 
     protected void targetC() {
@@ -63,6 +62,7 @@ public class Blue2OpMode extends BlueOpMode {
         robot.drive(1,0,25,71);
         robot.drive(-1,0,0,45);
         robot.drive(0,-1,0,12);
+        robot.drive(0,1,0,28);
     }
 
     private void shootPowerShots() {
@@ -73,21 +73,14 @@ public class Blue2OpMode extends BlueOpMode {
         robot.shooter(SHOOT);
         robot.drive(1,0,-12,0);
         robot.shooter(SHOOT);
+        robot.drive(1,0,0,12); //make sure to get back on line
     }
 
     private void shootHighGoal() {
-        robot.drive(0,1,0,36);
-        robot.drive(1, 0, -10, 14);
-        robot.intake(UP);
-        sleep(750);
-        robot.intake(STOP);
         robot.shooter(ON);
         robot.shooter(SHOOT);
         robot.shooter(SHOOT);
         robot.shooter(SHOOT);
-        robot.drive(1,0,-10,10); //make sure to get back on line
-        robot.intake(DOWN);
-        sleep(750);
-        robot.intake(STOP);
+        robot.drive(1,0,0,16); //make sure to get back on line
     }
 }
