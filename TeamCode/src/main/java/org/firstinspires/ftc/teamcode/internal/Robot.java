@@ -446,15 +446,19 @@ public class Robot {
     }
 
     public void intake(IntakeLiftMode mode){
-        if (mode == CALIBRATE) {
-            //intakeLift.setPower(mode.power);
-            //while (!intakeLiftLimitBottom.getState()) opMode.sleep(50);
-            //intakeLift.setPower(0);
-           // intakeLift.setMode(STOP_AND_RESET_ENCODER);
-        } else {
-            intakeLift.setTargetPosition(mode.position);
-            intakeLift.setMode(RUN_TO_POSITION);
-            intakeLift.setPower(mode.power);
+        switch(mode){
+            case CALIBRATE:
+                //intakeLift.setPower(mode.power);
+                //while (!intakeLiftLimitBottom.getState()) opMode.sleep(50);
+                //intakeLift.setPower(0);
+                // intakeLift.setMode(STOP_AND_RESET_ENCODER);
+                break;
+            case UP:
+                intakeLift.setPower(intakeLiftLimitTop.getState() ? mode.power : 0);
+                break;
+            case DOWN:
+                intakeLift.setPower(intakeLiftLimitBottom.getState() ? mode.power : 0);
+                break;
         }
     }
 
