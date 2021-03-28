@@ -460,6 +460,10 @@ public class Robot {
         intakeLatch.setPosition(position.value);
     }
 
+    public void intake(double position) {
+        intakeLatch.setPosition(position);
+    }
+
     public void addTelemetry() {
         Telemetry telemetry = opMode.telemetry;
 
@@ -477,7 +481,7 @@ public class Robot {
         telemetry.addData("Wobble Limit Front", wobbleLimitFront.getState());
         telemetry.addData("Intake Wheel", "%.2f Pow, %d Pos", intakeWheel.getPower(), intakeWheel.getCurrentPosition());
         telemetry.addData("Intake Lift", "%.2f Pow, %d Pos", intakeLift.getPower(), intakeLift.getCurrentPosition());
-        telemetry.addData("Intake Latch", wobbleLatch.getPosition());
+        telemetry.addData("Intake Latch", intakeLatch.getPosition());
         telemetry.addData("Intake Lift Limit Bottom", intakeLiftLimitBottom.getState());
         telemetry.addData("Intake Lift Limit Top", intakeLiftLimitTop.getState());
         telemetry.addData("Target Visible", navigationTargetVisible);
