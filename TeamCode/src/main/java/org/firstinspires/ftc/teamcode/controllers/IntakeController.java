@@ -23,6 +23,5 @@ public class IntakeController extends RobotController {
         else if (gamepad2.left_stick_button) robot.intake(DOWN);
         else if (gamepad2.dpad_down) robot.intake(OPEN);
         else if (gamepad2.dpad_up) robot.intake(CLOSED);
-        else robot.intake(STOP);
     }
 }
