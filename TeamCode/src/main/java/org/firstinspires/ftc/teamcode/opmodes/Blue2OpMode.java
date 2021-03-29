@@ -61,7 +61,7 @@ public class Blue2OpMode extends BlueOpMode {
         robot.drive(0,1,0,38);
         robot.drive(1,0,0,42);
         robot.drive(1,0,25,71);
-        robot.drive(-1,0,0,45);
+        robot.drive(-1,0,0,50);
         robot.drive(0,-1,0,12);
     }
 
