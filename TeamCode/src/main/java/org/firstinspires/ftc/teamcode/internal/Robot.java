@@ -413,18 +413,19 @@ public class Robot {
     }
 
     public enum IntakeWheelMode {
-        ON, OFF
+        FORWARD(1), NEUTRAL(0), REVERSE(-1);
+        public double power;
+        IntakeWheelMode(double power) {
+            this.power = power;
+        }
     }
 
+    public IntakeWheelMode intakeWheelMode = IntakeWheelMode.NEUTRAL;
+
     public void intake(IntakeWheelMode mode){
-        switch(mode) {
-            case ON:
-                intakeWheel.setPower(1);
-                break;
-            case OFF:
-                intakeWheel.setPower(0);
-                break;
-        }
+       intakeWheel.setPower(mode.power);
+       intakeWheelMode = mode;
+       opMode.sleep(500);
     }
 
     public enum IntakeLiftMode {

@@ -20,6 +20,8 @@ public class DriveController extends RobotController {
         else if (gamepad1.dpad_down && robot.drivePower == HIGH) robot.drivePower = MEDIUM;
         else if (gamepad1.dpad_down && robot.drivePower == MEDIUM) robot.drivePower = LOW;
 
+        if (gamepad1.dpad_up || gamepad1.dpad_down) opMode.sleep(500);
+
         robot.drive(
            -gamepad1.left_stick_y,
             gamepad1.left_stick_x,
