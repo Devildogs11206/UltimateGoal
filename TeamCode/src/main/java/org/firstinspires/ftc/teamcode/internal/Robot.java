@@ -449,8 +449,9 @@ public class Robot {
     }
 
     public void intake(IntakeLiftMode mode){
-       intakeLift.setTargetPosition(mode.position);
-       intakeLift.setMode(RUN_TO_POSITION);
+        intake(OPEN);
+        intakeLift.setTargetPosition(mode.position);
+        intakeLift.setMode(RUN_TO_POSITION);
         intakeLift.setPower(mode.power);
 
     }
