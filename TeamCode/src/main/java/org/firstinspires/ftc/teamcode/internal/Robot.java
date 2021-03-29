@@ -32,6 +32,7 @@ import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern.RED;
 import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern.YELLOW;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.FLOAT;
@@ -178,22 +179,22 @@ public class Robot {
         shooterWheel = hardwareMap.get(DcMotor.class, "shooterWheel");
         shooterWheel.setDirection(REVERSE);
         shooterWheel.setZeroPowerBehavior(FLOAT);
-        shooterWheel.setMode(STOP_AND_RESET_ENCODER);
-        shooterWheel.setMode(RUN_USING_ENCODER);
+        //shooterWheel.setMode(STOP_AND_RESET_ENCODER);
+        shooterWheel.setMode(RUN_WITHOUT_ENCODER);
 
         shooterFlipper = hardwareMap.get(Servo.class,"shooterFlipper");
 
         intakeWheel = hardwareMap.get(DcMotor.class, "intakeWheel");
         intakeWheel.setDirection(REVERSE);
         intakeWheel.setZeroPowerBehavior(BRAKE);
-        intakeWheel.setMode(STOP_AND_RESET_ENCODER);
-        intakeWheel.setMode(RUN_USING_ENCODER);
+        //intakeWheel.setMode(STOP_AND_RESET_ENCODER);
+        intakeWheel.setMode(RUN_WITHOUT_ENCODER);
 
         intakeLift = hardwareMap.get(DcMotor.class, "intakeLift");
         intakeLift.setDirection(FORWARD);
         intakeLift.setZeroPowerBehavior(BRAKE);
-        intakeLift.setMode(STOP_AND_RESET_ENCODER);
-        intakeLift.setMode(RUN_USING_ENCODER);
+        //intakeLift.setMode(STOP_AND_RESET_ENCODER);
+        intakeLift.setMode(RUN_WITHOUT_ENCODER);
 
         intakeLatch = hardwareMap.get(Servo.class,"intakeLatch");
 
