@@ -79,13 +79,13 @@ public class Blue2OpMode extends BlueOpMode {
     private void shootHighGoal() {
 
         robot.drive(0,1,0,40);
-        robot.drive(1,0,0,9);
+        robot.drive(1,0,-5,9);
         robot.intake(UP);
 
         robot.shooter(ON);
         robot.shooter(SHOOT);
         robot.shooter(SHOOT);
         robot.shooter(SHOOT);
-        robot.drive(1,0,0,16); //make sure to get back on line
+        robot.drive(1,0,-5,16); //make sure to get back on line
     }
 }
