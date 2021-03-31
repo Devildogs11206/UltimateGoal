@@ -179,29 +179,27 @@ public class Robot {
         shooterWheel = hardwareMap.get(DcMotor.class, "shooterWheel");
         shooterWheel.setDirection(REVERSE);
         shooterWheel.setZeroPowerBehavior(FLOAT);
-        //shooterWheel.setMode(STOP_AND_RESET_ENCODER);
         shooterWheel.setMode(RUN_WITHOUT_ENCODER);
 
         shooterFlipper = hardwareMap.get(Servo.class,"shooterFlipper");
 
-        intakeWheel = hardwareMap.get(DcMotor.class, "intakeWheel");
-        intakeWheel.setDirection(REVERSE);
-        intakeWheel.setZeroPowerBehavior(BRAKE);
-        //intakeWheel.setMode(STOP_AND_RESET_ENCODER);
-        intakeWheel.setMode(RUN_WITHOUT_ENCODER);
-
         intakeLift = hardwareMap.get(DcMotor.class, "intakeLift");
         intakeLift.setDirection(FORWARD);
         intakeLift.setZeroPowerBehavior(BRAKE);
-        //intakeLift.setMode(STOP_AND_RESET_ENCODER);
-        intakeLift.setMode(RUN_WITHOUT_ENCODER);
+        intakeLift.setMode(STOP_AND_RESET_ENCODER);
+        intakeLift.setMode(RUN_USING_ENCODER);
 
-        intakeLatch = hardwareMap.get(Servo.class,"intakeLatch");
+        intakeWheel = hardwareMap.get(DcMotor.class, "intakeWheel");
+        intakeWheel.setDirection(REVERSE);
+        intakeWheel.setZeroPowerBehavior(BRAKE);
+        intakeWheel.setMode(RUN_WITHOUT_ENCODER);
 
         intakeLiftLimitTop = hardwareMap.get(DigitalChannel.class, "intakeLiftLimitTop");
         intakeLiftLimitTop.setMode(INPUT);
         intakeLiftLimitBottom = hardwareMap.get(DigitalChannel.class, "intakeLiftLimitBottom");
         intakeLiftLimitBottom.setMode(INPUT);
+
+        intakeLatch = hardwareMap.get(Servo.class,"intakeLatch");
 
         try {
             ringWebcam = hardwareMap.get(WebcamName.class,"ringWebcam");
@@ -231,7 +229,6 @@ public class Robot {
 
     public void calibrate() {
         setLights(CALIBRATE_COLOR);
-        intake(CALIBRATE);
         intake(CLOSED);
         setLights(READY_COLOR);
     }
@@ -405,9 +402,9 @@ public class Robot {
                 break;
             case SHOOT:
                 shooterFlipper.setPosition(1);
-                opMode.sleep(500); //extend to 750-1000 if jamming
+                opMode.sleep(750); //extend to 750-1000 if jamming
                 shooterFlipper.setPosition(0);
-                opMode.sleep(500);
+                opMode.sleep(750);
                 break;
         }
     }
@@ -429,7 +426,7 @@ public class Robot {
     }
 
     public enum IntakeLiftMode {
-        CALIBRATE(-.2,0), UP(.5,1000), DOWN(-.5,0), STOP(0,0);  //change Up later when we konw
+        CALIBRATE(-.2,0), UP(.5,-200), DOWN(-.5,-1200), STOP(0,0);  //change Up later when we konw
 
         public double power;
         public int position;
@@ -450,12 +447,25 @@ public class Robot {
         }
     }
 
-    public void intake(IntakeLiftMode mode){
+    public void intake(IntakeLiftMode mode) {
         intake(OPEN);
-        intakeLift.setTargetPosition(mode.position);
-        intakeLift.setMode(RUN_TO_POSITION);
-        intakeLift.setPower(mode.power);
 
+        switch (mode) {
+            case UP:
+                intakeLift.setMode(RUN_USING_ENCODER);
+                intakeLift.setPower(mode.power);
+                while (intakeLiftLimitTop.getState()) opMode.sleep(50);
+                intakeLift.setMode(STOP_AND_RESET_ENCODER);
+                intakeLift.setTargetPosition(mode.position);
+                intakeLift.setMode(RUN_TO_POSITION);
+                intakeLift.setPower(mode.power);
+                break;
+            case DOWN:
+                intakeLift.setTargetPosition(mode.position);
+                intakeLift.setMode(RUN_TO_POSITION);
+                intakeLift.setPower(mode.power);
+                break;
+        }
     }
 
     public void intake(IntakeLatchPosition position) {
@@ -478,7 +488,7 @@ public class Robot {
         telemetry.addData("Wobble Limit Back", wobbleLimitBack.getState());
         telemetry.addData("Wobble Limit Front", wobbleLimitFront.getState());
         telemetry.addData("Intake Wheel", "%.2f Pow, %d Pos", intakeWheel.getPower(), intakeWheel.getCurrentPosition());
-        telemetry.addData("Intake Lift", "%.2f Pow, %d Pos", intakeLift.getPower(), intakeLift.getCurrentPosition());
+        telemetry.addData("Intake Lift", "%.2f Pow, %d Pos, %s", intakeLift.getPower(), intakeLift.getCurrentPosition(), intakeLift.getMode());
         telemetry.addData("Intake Latch", intakeLatch.getPosition());
         telemetry.addData("Intake Lift Limit Bottom", intakeLiftLimitBottom.getState());
         telemetry.addData("Intake Lift Limit Top", intakeLiftLimitTop.getState());
