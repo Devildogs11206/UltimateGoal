@@ -450,22 +450,9 @@ public class Robot {
     public void intake(IntakeLiftMode mode) {
         intake(OPEN);
 
-        switch (mode) {
-            case UP:
-                intakeLift.setMode(RUN_USING_ENCODER);
-                intakeLift.setPower(mode.power);
-                while (intakeLiftLimitTop.getState()) opMode.sleep(50);
-                intakeLift.setMode(STOP_AND_RESET_ENCODER);
-                intakeLift.setTargetPosition(mode.position);
-                intakeLift.setMode(RUN_TO_POSITION);
-                intakeLift.setPower(mode.power);
-                break;
-            case DOWN:
-                intakeLift.setTargetPosition(mode.position);
-                intakeLift.setMode(RUN_TO_POSITION);
-                intakeLift.setPower(mode.power);
-                break;
-        }
+        intakeLift.setTargetPosition(mode.position);
+        intakeLift.setMode(RUN_TO_POSITION);
+        intakeLift.setPower(mode.power);
     }
 
     public void intake(IntakeLatchPosition position) {
@@ -488,7 +475,7 @@ public class Robot {
         telemetry.addData("Wobble Limit Back", wobbleLimitBack.getState());
         telemetry.addData("Wobble Limit Front", wobbleLimitFront.getState());
         telemetry.addData("Intake Wheel", "%.2f Pow, %d Pos", intakeWheel.getPower(), intakeWheel.getCurrentPosition());
-        telemetry.addData("Intake Lift", "%.2f Pow, %d Pos, %s", intakeLift.getPower(), intakeLift.getCurrentPosition(), intakeLift.getMode());
+        telemetry.addData("Intake Lift", "%.2f Pow, %d Pos", intakeLift.getPower(), intakeLift.getCurrentPosition());
         telemetry.addData("Intake Latch", intakeLatch.getPosition());
         telemetry.addData("Intake Lift Limit Bottom", intakeLiftLimitBottom.getState());
         telemetry.addData("Intake Lift Limit Top", intakeLiftLimitTop.getState());
