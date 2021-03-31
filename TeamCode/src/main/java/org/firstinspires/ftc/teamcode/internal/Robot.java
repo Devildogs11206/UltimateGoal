@@ -313,8 +313,8 @@ public class Robot {
 
     private double getOffset(Recognition item) {
         // Linear Coordinates
-        final double x1 = 140/*height*/, y1 = 14/*degrees*/;
-        final double x2 = 254/*height*/, y2 = 9/*degrees*/;
+        final double x1 = 140 /*height*/, y1 = 14 /*degrees*/;
+        final double x2 = 254 /*height*/, y2 = 9 /*degrees*/;
 
         // Linear Equation: y(x) = y1 + ((y2 - y1) / (x2 - x1)) * (x - x1)
         return y1 + ((y2 - y1) / (x2 - x1)) * (item.getHeight() - x1);
@@ -425,7 +425,7 @@ public class Robot {
     }
 
     public enum IntakeLiftMode {
-         UP(.5,-200), DOWN(-.5,-1200); //change Up later when we know
+        UP(.5,-200), DOWN(-.5,-1200); //change Up later when we know
 
         public double power;
         public int position;

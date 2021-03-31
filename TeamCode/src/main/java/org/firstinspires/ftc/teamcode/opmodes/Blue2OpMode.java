@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLatchPosition.OPEN;
 import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLiftMode.DOWN;
 import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLiftMode.UP;
 import static org.firstinspires.ftc.teamcode.internal.Robot.ShooterMode.ON;
@@ -77,15 +76,14 @@ public class Blue2OpMode extends BlueOpMode {
     }
 
     private void shootHighGoal() {
-
         robot.drive(0,1,0,40);
         robot.drive(1,0,-5,9);
         robot.intake(UP);
-
         robot.shooter(ON);
         robot.shooter(SHOOT);
         robot.shooter(SHOOT);
         robot.shooter(SHOOT);
         robot.drive(1,0,-5,16); //make sure to get back on line
+        robot.intake(DOWN);
     }
 }
