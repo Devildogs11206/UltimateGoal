@@ -44,7 +44,6 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.ZYX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.INTRINSIC;
 import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLatchPosition.CLOSED;
 import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLatchPosition.OPEN;
-import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLiftMode.CALIBRATE;
 import static org.firstinspires.ftc.teamcode.internal.Robot.RobotDriveType.MECANUM;
 import static org.firstinspires.ftc.teamcode.internal.Robot.WobbleArmAction.DOWN;
 import static org.firstinspires.ftc.teamcode.internal.Robot.WobbleArmAction.UP;
