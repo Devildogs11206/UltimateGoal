@@ -426,7 +426,7 @@ public class Robot {
     }
 
     public enum IntakeLiftMode {
-        CALIBRATE(-.2,0), UP(.5,-200), DOWN(-.5,-1200), STOP(0,0);  //change Up later when we konw
+         UP(.5,-200), DOWN(-.5,-1200); //change Up later when we know
 
         public double power;
         public int position;
@@ -449,7 +449,12 @@ public class Robot {
 
     public void intake(IntakeLiftMode mode) {
         intake(OPEN);
-
+        if (mode == IntakeLiftMode.UP){
+            intakeLift.setMode(RUN_USING_ENCODER);
+            intakeLift.setPower(mode.power);
+            while (intakeLiftLimitTop.getState()) opMode.sleep(50);
+            intakeLift.setMode(STOP_AND_RESET_ENCODER);
+        }
         intakeLift.setTargetPosition(mode.position);
         intakeLift.setMode(RUN_TO_POSITION);
         intakeLift.setPower(mode.power);
