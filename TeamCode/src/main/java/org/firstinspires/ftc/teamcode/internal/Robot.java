@@ -32,6 +32,7 @@ import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern.RED;
 import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern.YELLOW;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.FLOAT;
@@ -43,7 +44,6 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.ZYX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.INTRINSIC;
 import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLatchPosition.CLOSED;
 import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLatchPosition.OPEN;
-import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLiftMode.CALIBRATE;
 import static org.firstinspires.ftc.teamcode.internal.Robot.RobotDriveType.MECANUM;
 import static org.firstinspires.ftc.teamcode.internal.Robot.WobbleArmAction.DOWN;
 import static org.firstinspires.ftc.teamcode.internal.Robot.WobbleArmAction.UP;
@@ -178,16 +178,9 @@ public class Robot {
         shooterWheel = hardwareMap.get(DcMotor.class, "shooterWheel");
         shooterWheel.setDirection(REVERSE);
         shooterWheel.setZeroPowerBehavior(FLOAT);
-        shooterWheel.setMode(STOP_AND_RESET_ENCODER);
-        shooterWheel.setMode(RUN_USING_ENCODER);
+        shooterWheel.setMode(RUN_WITHOUT_ENCODER);
 
         shooterFlipper = hardwareMap.get(Servo.class,"shooterFlipper");
-
-        intakeWheel = hardwareMap.get(DcMotor.class, "intakeWheel");
-        intakeWheel.setDirection(REVERSE);
-        intakeWheel.setZeroPowerBehavior(BRAKE);
-        intakeWheel.setMode(STOP_AND_RESET_ENCODER);
-        intakeWheel.setMode(RUN_USING_ENCODER);
 
         intakeLift = hardwareMap.get(DcMotor.class, "intakeLift");
         intakeLift.setDirection(FORWARD);
@@ -195,12 +188,17 @@ public class Robot {
         intakeLift.setMode(STOP_AND_RESET_ENCODER);
         intakeLift.setMode(RUN_USING_ENCODER);
 
-        intakeLatch = hardwareMap.get(Servo.class,"intakeLatch");
+        intakeWheel = hardwareMap.get(DcMotor.class, "intakeWheel");
+        intakeWheel.setDirection(REVERSE);
+        intakeWheel.setZeroPowerBehavior(BRAKE);
+        intakeWheel.setMode(RUN_WITHOUT_ENCODER);
 
         intakeLiftLimitTop = hardwareMap.get(DigitalChannel.class, "intakeLiftLimitTop");
         intakeLiftLimitTop.setMode(INPUT);
         intakeLiftLimitBottom = hardwareMap.get(DigitalChannel.class, "intakeLiftLimitBottom");
         intakeLiftLimitBottom.setMode(INPUT);
+
+        intakeLatch = hardwareMap.get(Servo.class,"intakeLatch");
 
         try {
             ringWebcam = hardwareMap.get(WebcamName.class,"ringWebcam");
@@ -230,7 +228,6 @@ public class Robot {
 
     public void calibrate() {
         setLights(CALIBRATE_COLOR);
-        intake(CALIBRATE);
         intake(CLOSED);
         setLights(READY_COLOR);
     }
@@ -404,30 +401,31 @@ public class Robot {
                 break;
             case SHOOT:
                 shooterFlipper.setPosition(1);
-                opMode.sleep(500); //extend to 750-1000 if jamming
+                opMode.sleep(750); //extend to 750-1000 if jamming
                 shooterFlipper.setPosition(0);
-                opMode.sleep(500);
+                opMode.sleep(750);
                 break;
         }
     }
 
     public enum IntakeWheelMode {
-        ON, OFF
-    }
-
-    public void intake(IntakeWheelMode mode){
-        switch(mode) {
-            case ON:
-                intakeWheel.setPower(1);
-                break;
-            case OFF:
-                intakeWheel.setPower(0);
-                break;
+        FORWARD(1), NEUTRAL(0), REVERSE(-1);
+        public double power;
+        IntakeWheelMode(double power) {
+            this.power = power;
         }
     }
 
+    public IntakeWheelMode intakeWheelMode = IntakeWheelMode.NEUTRAL;
+
+    public void intake(IntakeWheelMode mode){
+       intakeWheel.setPower(mode.power);
+       intakeWheelMode = mode;
+       opMode.sleep(500);
+    }
+
     public enum IntakeLiftMode {
-        CALIBRATE(-.2,0), UP(.5,1200), DOWN(-.5,0), STOP(0,0);  //change Up later when we konw
+         UP(.5,-200), DOWN(-.5,-1200); //change Up later when we know
 
         public double power;
         public int position;
@@ -448,12 +446,17 @@ public class Robot {
         }
     }
 
-    public void intake(IntakeLiftMode mode){
+    public void intake(IntakeLiftMode mode) {
         intake(OPEN);
+        if (mode == IntakeLiftMode.UP){
+            intakeLift.setMode(RUN_USING_ENCODER);
+            intakeLift.setPower(mode.power);
+            while (intakeLiftLimitTop.getState()) opMode.sleep(50);
+            intakeLift.setMode(STOP_AND_RESET_ENCODER);
+        }
         intakeLift.setTargetPosition(mode.position);
         intakeLift.setMode(RUN_TO_POSITION);
         intakeLift.setPower(mode.power);
-
     }
 
     public void intake(IntakeLatchPosition position) {
