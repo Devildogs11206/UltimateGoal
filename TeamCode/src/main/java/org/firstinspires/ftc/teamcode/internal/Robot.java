@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.internal;
 
+import java.util.List;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -16,8 +18,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.opmodes.OpMode;
 
-import java.util.List;
-
 import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern.BLACK;
 import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern.BLUE;
 import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern.GRAY;
@@ -31,6 +31,7 @@ import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern.LIGHT
 import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern.RAINBOW_LAVA_PALETTE;
 import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern.RED;
 import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern.YELLOW;
+
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER;
@@ -39,13 +40,13 @@ import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.FLOAT;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 import static com.qualcomm.robotcore.hardware.DigitalChannel.Mode.INPUT;
+
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.ZYX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.INTRINSIC;
 import static org.firstinspires.ftc.teamcode.internal.Robot.DrivePowerMode.HIGH;
 import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLatchPosition.CLOSED;
 import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLatchPosition.OPEN;
-import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLiftMode.UP;
 import static org.firstinspires.ftc.teamcode.internal.Robot.RobotDriveType.MECANUM;
 import static org.firstinspires.ftc.teamcode.internal.Robot.WobbleArmAction.BACKWARD;
 import static org.firstinspires.ftc.teamcode.internal.Robot.WobbleArmAction.FORWARD;
@@ -241,11 +242,11 @@ public class Robot {
 
         if (driveType != MECANUM) strafe = 0;
 
-        // since left stick can be pushed in all directions to controlthe robot's movements, its "power" must be the actual
+        // Since left stick can be pushed in all directions to control the robot's movements, its "power" must be the actual
         // distance from the center, or the hypotenuse of the right triangle formed by left_stick_x and left_stick_y
         double r = Math.hypot(strafe, drive);
 
-        // angle between x axis and "coordinates" of left stick
+        // Angle between x axis and "coordinates" of left stick
         double robotAngle = Math.atan2(drive, strafe) - Math.PI / 4;
 
         double lf = drivePower * (r * Math.cos(robotAngle) + turn);
@@ -356,7 +357,7 @@ public class Robot {
         ON, OFF, SHOOT
     }
 
-    public void shooter(ShooterMode mode){
+    public void shooter(ShooterMode mode) {
         switch(mode) {
             case ON:
                 shooterWheel.setPower(1);
@@ -386,14 +387,14 @@ public class Robot {
 
     public IntakeWheelMode intakeWheelMode = IntakeWheelMode.NEUTRAL;
 
-    public void intake(IntakeWheelMode mode){
+    public void intake(IntakeWheelMode mode) {
        intakeWheel.setPower(mode.power);
        intakeWheelMode = mode;
        opMode.sleep(500);
     }
 
     public enum IntakeLiftMode {
-        UP(.5,-200), DOWN(-.5,-1200); //change Up later when we know
+        UP(.5,-200), DOWN(-.5,-1200);
 
         public double power;
         public int position;
@@ -417,7 +418,7 @@ public class Robot {
     public void intake(IntakeLiftMode mode) {
         intake(OPEN);
 
-        if (mode == UP) {
+        if (intakeLift.getMode() != RUN_TO_POSITION) {
             intakeLift.setMode(RUN_USING_ENCODER);
             intakeLift.setPower(mode.power);
             while (!opMode.isStopping() && intakeLiftLimitTop.getState()) opMode.sleep(50);
