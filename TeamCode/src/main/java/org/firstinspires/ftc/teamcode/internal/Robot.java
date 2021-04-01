@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.internal;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -36,17 +37,18 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODE
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.FLOAT;
-import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 import static com.qualcomm.robotcore.hardware.DigitalChannel.Mode.INPUT;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.ZYX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.INTRINSIC;
+import static org.firstinspires.ftc.teamcode.internal.Robot.DrivePowerMode.HIGH;
 import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLatchPosition.CLOSED;
 import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLatchPosition.OPEN;
+import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLiftMode.UP;
 import static org.firstinspires.ftc.teamcode.internal.Robot.RobotDriveType.MECANUM;
-import static org.firstinspires.ftc.teamcode.internal.Robot.WobbleArmAction.DOWN;
-import static org.firstinspires.ftc.teamcode.internal.Robot.WobbleArmAction.UP;
+import static org.firstinspires.ftc.teamcode.internal.Robot.WobbleArmAction.BACKWARD;
+import static org.firstinspires.ftc.teamcode.internal.Robot.WobbleArmAction.FORWARD;
 
 public class Robot {
     public double drivePower = 1;
@@ -81,7 +83,6 @@ public class Robot {
 
     private DcMotor wobbleArm;
     private Servo wobbleLatch;
-    private Servo wobbleRingLatch;
     private DigitalChannel wobbleLimitBack;
     private DigitalChannel wobbleLimitFront;
 
@@ -142,7 +143,7 @@ public class Robot {
         driveLeftFront.setMode(RUN_USING_ENCODER);
 
         driveRightFront = hardwareMap.get(DcMotor.class,"driveRightFront");
-        driveRightFront.setDirection(FORWARD);
+        driveRightFront.setDirection(DcMotorSimple.Direction.FORWARD);
         driveRightFront.setZeroPowerBehavior(BRAKE);
         driveRightFront.setMode(STOP_AND_RESET_ENCODER);
         driveRightFront.setMode(RUN_USING_ENCODER);
@@ -154,7 +155,7 @@ public class Robot {
         driveLeftRear.setMode(RUN_USING_ENCODER);
 
         driveRightRear = hardwareMap.get(DcMotor.class, "driveRightRear");
-        driveRightRear.setDirection(FORWARD);
+        driveRightRear.setDirection(DcMotorSimple.Direction.FORWARD);
         driveRightRear.setZeroPowerBehavior(BRAKE);
         driveRightRear.setMode(STOP_AND_RESET_ENCODER);
         driveRightRear.setMode(RUN_USING_ENCODER);
@@ -162,13 +163,12 @@ public class Robot {
         lights = hardwareMap.get(RevBlinkinLedDriver.class,"lights");
 
         wobbleArm = hardwareMap.get(DcMotor.class, "wobbleArm");
-        wobbleArm.setDirection(FORWARD);
+        wobbleArm.setDirection(DcMotorSimple.Direction.REVERSE);
         wobbleArm.setZeroPowerBehavior(BRAKE);
         wobbleArm.setMode(STOP_AND_RESET_ENCODER);
         wobbleArm.setMode(RUN_USING_ENCODER);
 
         wobbleLatch = hardwareMap.get(Servo.class,"wobbleLatch");
-        wobbleRingLatch = hardwareMap.get(Servo.class,"wobbleRingLatch");
 
         wobbleLimitBack = hardwareMap.get(DigitalChannel.class, "wobbleLimitBack");
         wobbleLimitBack.setMode(INPUT);
@@ -183,7 +183,7 @@ public class Robot {
         shooterFlipper = hardwareMap.get(Servo.class,"shooterFlipper");
 
         intakeLift = hardwareMap.get(DcMotor.class, "intakeLift");
-        intakeLift.setDirection(FORWARD);
+        intakeLift.setDirection(DcMotorSimple.Direction.FORWARD);
         intakeLift.setZeroPowerBehavior(BRAKE);
         intakeLift.setMode(STOP_AND_RESET_ENCODER);
         intakeLift.setMode(RUN_USING_ENCODER);
@@ -321,7 +321,7 @@ public class Robot {
     }
 
     public enum WobbleArmAction {
-        UP(0.50), DOWN(-0.50), STOP(0);
+        FORWARD(+0.50), BACKWARD(-0.50), STOP(0);
 
         public double power;
 
@@ -331,35 +331,15 @@ public class Robot {
     }
 
     public void wobbleArm(WobbleArmAction action) {
-        if ((action == UP && !wobbleLimitBack.getState()) ||
-            (action == DOWN && !wobbleLimitFront.getState())) {
-            wobbleArm.setPower(0);
-        } else {
-            wobbleArm.setPower(action.power);
-        }
-    }
+        boolean atLimit =
+            (action == FORWARD && !wobbleLimitFront.getState()) ||
+            (action == BACKWARD && !wobbleLimitBack.getState());
 
-    public enum WobbleArmPosition {
-        DOWN(0), UP(1275), BACK(2550);
-
-        public int value;
-
-        WobbleArmPosition(int value) {
-            this.value = value;
-        }
-    }
-
-    public void wobbleArm(WobbleArmPosition position) {
-        wobbleArm.setPower(0.50);
-        wobbleArm.setTargetPosition(position.value);
-        wobbleArm.setMode(RUN_TO_POSITION);
-        while (!opMode.isStopping() && wobbleArm.isBusy()) opMode.sleep(50);
-        wobbleArm.setPower(0);
-        wobbleArm.setMode(RUN_USING_ENCODER);
+        wobbleArm.setPower(atLimit ? 0 : action.power);
     }
 
     public enum WobbleLatchPosition {
-        OPEN(0.3), CLOSED(0.22);
+        OPEN(0.30), CLOSED(0.22);
 
         public double value;
 
@@ -370,20 +350,6 @@ public class Robot {
 
     public void wobbleLatch(WobbleLatchPosition position) {
         wobbleLatch.setPosition(position.value);
-    }
-
-    public enum WobbleRingLatchPosition {
-        OPEN(1), CLOSED(0);
-
-        public double value;
-
-        WobbleRingLatchPosition(double value) {
-            this.value = value;
-        }
-    }
-
-    public void wobbleRingLatch(WobbleRingLatchPosition position) {
-        wobbleRingLatch.setPosition(position.value);
     }
 
     public enum ShooterMode {
@@ -401,7 +367,7 @@ public class Robot {
                 break;
             case SHOOT:
                 shooterFlipper.setPosition(1);
-                opMode.sleep(750); //extend to 750-1000 if jamming
+                opMode.sleep(750);
                 shooterFlipper.setPosition(0);
                 opMode.sleep(750);
                 break;
@@ -410,7 +376,9 @@ public class Robot {
 
     public enum IntakeWheelMode {
         FORWARD(1), NEUTRAL(0), REVERSE(-1);
+
         public double power;
+
         IntakeWheelMode(double power) {
             this.power = power;
         }
@@ -437,7 +405,7 @@ public class Robot {
     }
 
     public enum IntakeLatchPosition {
-        OPEN(0), CLOSED(0.9);  //change later
+        OPEN(0), CLOSED(0.9);
 
         public double value;
 
@@ -448,12 +416,14 @@ public class Robot {
 
     public void intake(IntakeLiftMode mode) {
         intake(OPEN);
-        if (mode == IntakeLiftMode.UP){
+
+        if (mode == UP) {
             intakeLift.setMode(RUN_USING_ENCODER);
             intakeLift.setPower(mode.power);
-            while (intakeLiftLimitTop.getState()) opMode.sleep(50);
+            while (!opMode.isStopping() && intakeLiftLimitTop.getState()) opMode.sleep(50);
             intakeLift.setMode(STOP_AND_RESET_ENCODER);
         }
+
         intakeLift.setTargetPosition(mode.position);
         intakeLift.setMode(RUN_TO_POSITION);
         intakeLift.setPower(mode.power);
