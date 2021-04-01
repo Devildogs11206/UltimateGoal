@@ -110,6 +110,7 @@ public class VisionThread extends Thread {
             final float CAMERA_VERTICAL_DISPLACEMENT = 4.25f * mmPerInch; // eg: Camera is 4.25 Inches above ground
             final float CAMERA_HORIZONTAL_DISPLACEMENT = 0f; // eg: Camera is ON the robot's center line
 
+            // Camera orientation described here: https://ftcforum.firstinspires.org/forum/ftc-technology/blocks-programming/71118-logiticc310-webcam-configuration#post71125
             OpenGLMatrix robotFromCamera = OpenGLMatrix
                     .translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_HORIZONTAL_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
                     .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, 90));
