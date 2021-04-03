@@ -46,6 +46,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.ZYX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.INTRINSIC;
 import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLatchPosition.CLOSED;
 import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLatchPosition.OPEN;
+import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLiftMode.UP;
 import static org.firstinspires.ftc.teamcode.internal.Robot.RobotDriveType.MECANUM;
 import static org.firstinspires.ftc.teamcode.internal.Robot.WobbleArmAction.BACKWARD;
 import static org.firstinspires.ftc.teamcode.internal.Robot.WobbleArmAction.FORWARD;
@@ -183,7 +184,7 @@ public class Robot {
         shooterFlipper = hardwareMap.get(Servo.class,"shooterFlipper");
 
         intakeLift = hardwareMap.get(DcMotor.class, "intakeLift");
-        intakeLift.setDirection(DcMotorSimple.Direction.FORWARD);
+        intakeLift.setDirection(REVERSE);
         intakeLift.setZeroPowerBehavior(BRAKE);
         intakeLift.setMode(STOP_AND_RESET_ENCODER);
         intakeLift.setMode(RUN_USING_ENCODER);
@@ -419,7 +420,7 @@ public class Robot {
 
         if (intakeLift.getMode() != RUN_TO_POSITION) {
             intakeLift.setMode(RUN_USING_ENCODER);
-            intakeLift.setPower(mode.power);
+            intakeLift.setPower(UP.power);
             while (!opMode.isStopping() && intakeLiftLimitTop.getState()) opMode.sleep(50);
             intakeLift.setMode(STOP_AND_RESET_ENCODER);
         }
@@ -449,7 +450,7 @@ public class Robot {
         telemetry.addData("Wobble Limit Back", wobbleLimitBack.getState());
         telemetry.addData("Wobble Limit Front", wobbleLimitFront.getState());
         telemetry.addData("Intake Wheel", "%.2f Pow, %d Pos", intakeWheel.getPower(), intakeWheel.getCurrentPosition());
-        telemetry.addData("Intake Lift", "%.2f Pow, %d Pos", intakeLift.getPower(), intakeLift.getCurrentPosition());
+        telemetry.addData("Intake Lift", "%.2f Pow, %d Pos (%s)", intakeLift.getPower(), intakeLift.getCurrentPosition(), intakeLift.getMode());
         telemetry.addData("Intake Latch", intakeLatch.getPosition());
         telemetry.addData("Intake Lift Limit Bottom", intakeLiftLimitBottom.getState());
         telemetry.addData("Intake Lift Limit Top", intakeLiftLimitTop.getState());
