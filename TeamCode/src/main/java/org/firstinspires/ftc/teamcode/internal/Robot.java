@@ -390,7 +390,6 @@ public class Robot {
     public void intake(IntakeWheelMode mode) {
        intakeWheel.setPower(mode.power);
        intakeWheelMode = mode;
-       opMode.sleep(500);
     }
 
     public enum IntakeLiftMode {
