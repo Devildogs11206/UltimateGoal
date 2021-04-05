@@ -18,17 +18,16 @@ public class IntakeController extends RobotController {
     @Override
     public void execute() {
         // wheel
-        if (gamepad2.right_trigger > 0.5 && robot.intakeWheelMode == NEUTRAL) robot.intake(FORWARD);
-        else if (gamepad2.left_trigger > 0.5 && robot.intakeWheelMode == FORWARD) robot.intake(NEUTRAL);
-        else if (gamepad2.right_trigger > 0.5 && robot.intakeWheelMode == REVERSE) robot.intake(NEUTRAL);
-        else if (gamepad2.left_trigger > 0.5 && robot.intakeWheelMode == NEUTRAL) robot.intake(REVERSE);
+        if (gamepad2.right_trigger > 0.5 ) robot.intake(FORWARD);
+        else if (gamepad2.left_trigger > 0.5 ) robot.intake(REVERSE);
+        else robot.intake(NEUTRAL);
 
         // latch
-        else if (gamepad2.right_stick_button) robot.intake(OPEN);
+        if (gamepad2.right_stick_button) robot.intake(OPEN);
         else if (gamepad2.left_stick_button) robot.intake(CLOSED);
 
         // lift
-        else if (gamepad2.dpad_up) robot.intake(UP);
+        if (gamepad2.dpad_up) robot.intake(UP);
         else if (gamepad2.dpad_down) robot.intake(DOWN);
     }
 }
