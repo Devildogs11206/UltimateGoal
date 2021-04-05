@@ -354,7 +354,7 @@ public class Robot {
     }
 
     public enum ShooterMode {
-        ON, OFF, SHOOT
+        ON, OFF, SHOOT, RESET
     }
 
     public void shooter(ShooterMode mode) {
@@ -368,9 +368,9 @@ public class Robot {
                 break;
             case SHOOT:
                 shooterFlipper.setPosition(1);
-                opMode.sleep(500);
+                break;
+            case RESET:
                 shooterFlipper.setPosition(0);
-                opMode.sleep(500);
                 break;
         }
     }

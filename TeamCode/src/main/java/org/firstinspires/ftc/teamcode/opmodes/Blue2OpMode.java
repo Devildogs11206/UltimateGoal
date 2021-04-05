@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLiftMode.DOWN;
 import static org.firstinspires.ftc.teamcode.internal.Robot.IntakeLiftMode.UP;
 import static org.firstinspires.ftc.teamcode.internal.Robot.ShooterMode.ON;
+import static org.firstinspires.ftc.teamcode.internal.Robot.ShooterMode.RESET;
 import static org.firstinspires.ftc.teamcode.internal.Robot.ShooterMode.SHOOT;
 
 @Autonomous
@@ -68,10 +69,18 @@ public class Blue2OpMode extends BlueOpMode {
         robot.shooter(ON);
         robot.drive(1,0,-1,0); //robot turns to (guessed) orientation to shoot power shot target
         robot.shooter(SHOOT);
+        sleep(500);
+        robot.shooter(RESET);
+        sleep(500);
         robot.drive(1,0,-6,0);
         robot.shooter(SHOOT);
+        sleep(500);
+        robot.shooter(RESET);
+        sleep(500);
         robot.drive(1,0,-12,0);
         robot.shooter(SHOOT);
+        sleep(500);
+        robot.shooter(RESET);
         robot.drive(1,0,0,12); //make sure to get back on line
     }
 
@@ -81,8 +90,16 @@ public class Blue2OpMode extends BlueOpMode {
         robot.intake(UP);
         robot.shooter(ON);
         robot.shooter(SHOOT);
+        sleep(500);
+        robot.shooter(RESET);
+        sleep(500);
         robot.shooter(SHOOT);
+        sleep(500);
+        robot.shooter(RESET);
+        sleep(500);
         robot.shooter(SHOOT);
+        sleep(500);
+        robot.shooter(RESET);
         robot.drive(1,0,-5,16); //make sure to get back on line
         robot.intake(DOWN);
     }
