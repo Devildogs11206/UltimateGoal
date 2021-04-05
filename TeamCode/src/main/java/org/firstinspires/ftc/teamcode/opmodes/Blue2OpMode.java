@@ -90,15 +90,15 @@ public class Blue2OpMode extends BlueOpMode {
         robot.intake(UP);
         robot.shooter(ON);
         robot.shooter(SHOOT);
-        sleep(1000);
+        sleep(500);
         robot.shooter(RESET);
-        sleep(1000);
+        sleep(750);
         robot.shooter(SHOOT);
-        sleep(1000);
+        sleep(500);
         robot.shooter(RESET);
-        sleep(1000);
+        sleep(750);
         robot.shooter(SHOOT);
-        sleep(1000);
+        sleep(500);
         robot.shooter(RESET);
         robot.drive(1,0,-5,16); //make sure to get back on line
         robot.intake(DOWN);
