@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode.controllers;
 
-import android.icu.util.Measure;
-
 import org.firstinspires.ftc.teamcode.opmodes.OpMode;
 
 public class DriveController extends RobotController {
     private static final double HIGH = 1;
-    private static final double MEDIUM = .5;
-    private static final double LOW = .2;
+    private static final double MEDIUM = .75;
+    private static final double LOW = .25;
 
     public DriveController(OpMode opMode) {
         super(opMode);

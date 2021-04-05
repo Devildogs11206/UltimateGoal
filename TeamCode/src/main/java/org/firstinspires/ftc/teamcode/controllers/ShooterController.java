@@ -4,6 +4,7 @@ import org.firstinspires.ftc.teamcode.opmodes.OpMode;
 
 import static org.firstinspires.ftc.teamcode.internal.Robot.ShooterMode.OFF;
 import static org.firstinspires.ftc.teamcode.internal.Robot.ShooterMode.ON;
+import static org.firstinspires.ftc.teamcode.internal.Robot.ShooterMode.RESET;
 import static org.firstinspires.ftc.teamcode.internal.Robot.ShooterMode.SHOOT;
 
 public class ShooterController extends RobotController {
@@ -16,5 +17,6 @@ public class ShooterController extends RobotController {
         if (gamepad2.x) robot.shooter(ON);
         else if (gamepad2.y) robot.shooter(SHOOT);
         else if (gamepad2.b) robot.shooter(OFF);
+        else robot.shooter(RESET);
     }
 }
