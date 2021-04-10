@@ -203,7 +203,7 @@ public class Robot {
 
         try {
             ringWebcam = hardwareMap.get(WebcamName.class,"ringWebcam");
-            //navigationWebcam = hardwareMap.get(WebcamName.class,"navigationWebcam"); // Disabled to help preserve battery since not currently being used.
+            navigationWebcam = hardwareMap.get(WebcamName.class,"navigationWebcam");
             activeWebcam = ringWebcam;
             cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
             tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("tfodMonitorViewId","id",hardwareMap.appContext.getPackageName());

@@ -64,7 +64,7 @@ public class VisionThread extends Thread {
         try {
             VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(robot.cameraMonitorViewId);
             parameters.vuforiaLicenseKey = VUFORIA_KEY;
-            parameters.cameraName = ClassFactory.getInstance().getCameraManager().nameForSwitchableCamera(robot.ringWebcam, robot.ringWebcam); // To help preserve battery replaced robot.navigationWebcam with a second robot.ringWebcam to pacify SwitchableCamera requirements since navigationWebcam is not currently being used.
+            parameters.cameraName = ClassFactory.getInstance().getCameraManager().nameForSwitchableCamera(robot.ringWebcam, robot.navigationWebcam);
 
             vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
