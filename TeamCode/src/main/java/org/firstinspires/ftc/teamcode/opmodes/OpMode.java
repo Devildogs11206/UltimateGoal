@@ -11,7 +11,6 @@ public abstract class OpMode extends LinearOpMode {
     public OpMode() {
         this(true);
     }
-
     public OpMode(boolean calibrate) {
         this.calibrate = calibrate;
     }
