@@ -13,9 +13,12 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENC
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 import static org.firstinspires.ftc.teamcode.internal.Robot.RobotDriveType.MECANUM;
+import static org.firstinspires.ftc.teamcode.internal.Robot.RobotDriveType.STANDARD;
+
+import android.util.Log;
 
 public class Robot {
-    public double drivePower = 1;
+    public double drivePower = .05;
 
     private OpMode opMode;
 
@@ -23,7 +26,7 @@ public class Robot {
         STANDARD, MECANUM
     }
 
-    private RobotDriveType driveType = MECANUM;
+    public static RobotDriveType driveType = MECANUM;
 
     private DcMotor driveLeftFront;
     private DcMotor driveRightFront;
@@ -46,7 +49,7 @@ public class Robot {
         parameters.loggingEnabled = true;
         parameters.loggingTag = "IMU";
 
-        drivePower = 0.5;
+        drivePower = 0.05;
 
         driveLeftFront = hardwareMap.get(DcMotor.class, "driveLeftFront");
         driveLeftFront.setDirection(REVERSE);
